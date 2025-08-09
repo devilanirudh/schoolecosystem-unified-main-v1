@@ -24,42 +24,40 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { UserRole } from '@/lib/auth';
-
-interface SidebarProps {
-  currentView: string;
-  onViewChange: (view: string) => void;
-}
+import { Link, useLocation } from 'react-router-dom';
 
 interface MenuItem {
   id: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   roles: UserRole[];
+  path: string;
 }
 
 const menuItems: MenuItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'teacher', 'student', 'parent'] },
-  { id: 'students', label: 'Students', icon: Users, roles: ['admin', 'teacher'] },
-  { id: 'teachers', label: 'Teachers', icon: GraduationCap, roles: ['admin'] },
-  { id: 'classes', label: 'Classes & Timetable', icon: Calendar, roles: ['admin', 'teacher', 'student'] },
-  { id: 'assignments', label: 'Assignments', icon: BookOpen, roles: ['admin', 'teacher', 'student'] },
-  { id: 'exams', label: 'Exams & Results', icon: FileText, roles: ['admin', 'teacher', 'student', 'parent'] },
-  { id: 'fees', label: 'Fees & Payments', icon: DollarSign, roles: ['admin', 'parent'] },
-  { id: 'live-classes', label: 'Live Classes', icon: Video, roles: ['admin', 'teacher', 'student'] },
-  { id: 'library', label: 'Library', icon: Library, roles: ['admin', 'teacher', 'student'] },
-  { id: 'transport', label: 'Transport', icon: Bus, roles: ['admin', 'student', 'parent'] },
-  { id: 'hostel', label: 'Hostel', icon: Building, roles: ['admin', 'student', 'parent'] },
-  { id: 'events', label: 'Events & Activities', icon: CalendarIcon, roles: ['admin', 'teacher', 'student', 'parent'] },
-  { id: 'cms', label: 'Content Management', icon: Globe, roles: ['admin'] },
-  { id: 'crm', label: 'CRM & Leads', icon: UserCheck, roles: ['admin'] },
-  { id: 'reports', label: 'Reports & Analytics', icon: BarChart, roles: ['admin', 'teacher'] },
-  { id: 'communication', label: 'Communication', icon: MessageSquare, roles: ['admin', 'teacher', 'student', 'parent'] },
-  { id: 'settings', label: 'Settings', icon: Settings, roles: ['admin'] },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'teacher', 'student', 'parent'], path: '/' },
+  { id: 'students', label: 'Students', icon: Users, roles: ['admin', 'teacher'], path: '/students' },
+  { id: 'teachers', label: 'Teachers', icon: GraduationCap, roles: ['admin'], path: '/teachers' },
+  { id: 'classes', label: 'Classes & Timetable', icon: Calendar, roles: ['admin', 'teacher', 'student'], path: '/classes' },
+  { id: 'assignments', label: 'Assignments', icon: BookOpen, roles: ['admin', 'teacher', 'student'], path: '/assignments' },
+  { id: 'exams', label: 'Exams & Results', icon: FileText, roles: ['admin', 'teacher', 'student', 'parent'], path: '/exams' },
+  { id: 'fees', label: 'Fees & Payments', icon: DollarSign, roles: ['admin', 'parent'], path: '/fees' },
+  { id: 'live-classes', label: 'Live Classes', icon: Video, roles: ['admin', 'teacher', 'student'], path: '/live-classes' },
+  { id: 'library', label: 'Library', icon: Library, roles: ['admin', 'teacher', 'student'], path: '/library' },
+  { id: 'transport', label: 'Transport', icon: Bus, roles: ['admin', 'student', 'parent'], path: '/transport' },
+  { id: 'hostel', label: 'Hostel', icon: Building, roles: ['admin', 'student', 'parent'], path: '/hostel' },
+  { id: 'events', label: 'Events & Activities', icon: CalendarIcon, roles: ['admin', 'teacher', 'student', 'parent'], path: '/events' },
+  { id: 'cms', label: 'Content Management', icon: Globe, roles: ['admin'], path: '/cms' },
+  { id: 'crm', label: 'CRM & Leads', icon: UserCheck, roles: ['admin'], path: '/crm' },
+  { id: 'reports', label: 'Reports & Analytics', icon: BarChart, roles: ['admin', 'teacher'], path: '/reports' },
+  { id: 'communication', label: 'Communication', icon: MessageSquare, roles: ['admin', 'teacher', 'student', 'parent'], path: '/communication' },
+  { id: 'settings', label: 'Settings', icon: Settings, roles: ['admin'], path: '/settings' },
 ];
 
-export function Sidebar({ currentView, onViewChange }: SidebarProps) {
+export function Sidebar() {
   const { user } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
 
   const filteredMenuItems = menuItems.filter(item => 
     item.roles.includes(user?.role as UserRole)
@@ -89,7 +87,7 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       <nav className="p-2 space-y-1">
         {filteredMenuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentView === item.id;
+          const isActive = location.pathname === item.path;
 
           return (
             <Button
@@ -100,13 +98,14 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
                 isActive && "bg-gradient-primary text-primary-foreground shadow-glow",
                 isCollapsed && "px-2"
               )}
-              onClick={() => onViewChange(item.id)}
-              title={isCollapsed ? item.label : undefined}
+              asChild
             >
-              <Icon className="h-4 w-4 flex-shrink-0" />
-              {!isCollapsed && (
-                <span className="truncate">{item.label}</span>
-              )}
+              <Link to={item.path} title={isCollapsed ? item.label : undefined}>
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && (
+                  <span className="truncate">{item.label}</span>
+                )}
+              </Link>
             </Button>
           );
         })}

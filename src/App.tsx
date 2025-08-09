@@ -20,6 +20,8 @@ import CMSPage from "./pages/CMSPage";
 import CRMPage from "./pages/CRMPage";
 import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
+import HostelPage from "./pages/HostelPage";
+import CommunicationPage from "./pages/CommunicationPage";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/crm" element={<CRMPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/hostel" element={<HostelPage />} />
+            <Route path="/communication" element={<CommunicationPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
