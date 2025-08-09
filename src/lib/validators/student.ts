@@ -10,6 +10,7 @@ export const studentFormSchema = z.object({
   status: z.enum(['Active', 'Inactive', 'Suspended']),
   admissionDate: z.string().min(1, { message: "Admission date is required." }),
   fees: z.enum(['Paid', 'Pending', 'Overdue']),
+  feeAmount: z.coerce.number().min(0, { message: "Fee amount cannot be negative." }),
   parentName: z.string().min(2, { message: "Parent's name is required." }),
   parentPhone: z.string().min(10, { message: "Please enter a valid phone number." }),
   address: z.string().min(5, { message: "Address is required." }),

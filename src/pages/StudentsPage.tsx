@@ -35,6 +35,7 @@ const initialStudents: Student[] = [
     admissionDate: '2024-01-15',
     attendance: 94,
     fees: 'Paid',
+    feeAmount: 1310,
     parentName: 'John Johnson',
     parentPhone: '+1112223333',
     address: '123 Maple Street, Springfield'
@@ -50,6 +51,7 @@ const initialStudents: Student[] = [
     admissionDate: '2024-01-20',
     attendance: 88,
     fees: 'Pending',
+    feeAmount: 1310,
     parentName: 'Wei Chen',
     parentPhone: '+14445556666',
     address: '456 Oak Avenue, Springfield'
@@ -65,6 +67,7 @@ const initialStudents: Student[] = [
     admissionDate: '2024-02-01',
     attendance: 96,
     fees: 'Paid',
+    feeAmount: 1510,
     parentName: 'David Williams',
     parentPhone: '+17778889999',
     address: '789 Pine Lane, Springfield'
@@ -208,7 +211,7 @@ const StudentsPage = () => {
                   <TableHead>Student</TableHead>
                   <TableHead>Class</TableHead>
                   <TableHead>Parent Contact</TableHead>
-                  <TableHead>Fees Status</TableHead>
+                  <TableHead>Fees</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -233,9 +236,12 @@ const StudentsPage = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getFeesColor(student.fees)}>
-                        {student.fees}
-                      </Badge>
+                      <div>
+                        <div className="font-medium">${student.feeAmount}</div>
+                        <Badge variant={getFeesColor(student.fees)}>
+                          {student.fees}
+                        </Badge>
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Badge variant={getStatusColor(student.status)}>
