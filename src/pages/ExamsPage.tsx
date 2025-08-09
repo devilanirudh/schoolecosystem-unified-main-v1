@@ -111,13 +111,14 @@ const mockResults = [
 
 const ExamsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const filteredExams = mockExams.filter(exam => 
-    exam.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (exam.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     exam.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    exam.class.toLowerCase().includes(searchTerm.toLowerCase())
+    exam.class.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (selectedSubject === 'all' || exam.subject.toLowerCase() === selectedSubject.toLowerCase())
   );
 
   const getStatusColor = (status: string) => {
@@ -339,7 +340,7 @@ const ExamsPage = () => {
                       <SelectValue placeholder="Filter by subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Subjects</SelectItem>
+                      <SelectItem value="all">All Subjects</SelectItem>
                       <SelectItem value="mathematics">Mathematics</SelectItem>
                       <SelectItem value="english">English</SelectItem>
                       <SelectItem value="physics">Physics</SelectItem>

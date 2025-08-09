@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { StudentFormValues, studentSchema } from '@/lib/validators/student';
+import { StudentFormValues, studentFormSchema } from '@/lib/validators/student';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,7 @@ interface StudentFormProps {
 
 export function StudentForm({ onSubmit, defaultValues, onClose }: StudentFormProps) {
   const form = useForm<StudentFormValues>({
-    resolver: zodResolver(studentSchema),
+    resolver: zodResolver(studentFormSchema),
     defaultValues: {
       status: 'Active',
       fees: 'Pending',

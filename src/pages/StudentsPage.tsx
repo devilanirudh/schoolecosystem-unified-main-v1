@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { StudentForm } from '@/components/students/StudentForm';
-import { StudentFormValues } from '@/lib/validators/student';
+import { Student, StudentFormValues } from '@/lib/validators/student';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Search, 
@@ -25,7 +25,7 @@ import {
   Phone
 } from 'lucide-react';
 
-const initialStudents = [
+const initialStudents: Student[] = [
   {
     id: 1,
     name: 'Emma Johnson',
@@ -33,10 +33,10 @@ const initialStudents = [
     rollNo: 'ST001',
     class: 'Grade 10A',
     phone: '+1234567890',
-    status: 'Active' as const,
+    status: 'Active',
     admissionDate: '2024-01-15',
     attendance: 94,
-    fees: 'Paid' as const,
+    fees: 'Paid',
   },
   {
     id: 2,
@@ -45,10 +45,10 @@ const initialStudents = [
     rollNo: 'ST002',
     class: 'Grade 10B',
     phone: '+1234567891',
-    status: 'Active' as const,
+    status: 'Active',
     admissionDate: '2024-01-20',
     attendance: 88,
-    fees: 'Pending' as const,
+    fees: 'Pending',
   },
   {
     id: 3,
@@ -57,19 +57,17 @@ const initialStudents = [
     rollNo: 'ST003',
     class: 'Grade 11A',
     phone: '+1234567892',
-    status: 'Active' as const,
+    status: 'Active',
     admissionDate: '2024-02-01',
     attendance: 96,
-    fees: 'Paid' as const,
+    fees: 'Paid',
   }
 ];
-
-type Student = typeof initialStudents[0];
 
 const StudentsPage = () => {
   const [students, setStudents] = useState<Student[]>(initialStudents);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedClass, setSelectedClass] = useState('');
+  const [selectedClass, setSelectedClass] = useState('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | undefined>(undefined);
   const [deletingStudent, setDeletingStudent] = useState<Student | undefined>(undefined);
@@ -78,7 +76,7 @@ const StudentsPage = () => {
   const filteredStudents = students.filter(student => 
     (student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.rollNo.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (selectedClass === '' || student.class === selectedClass)
+    (selectedClass === 'all' || student.class === selectedClass)
   );
 
   const handleFormSubmit = (data: StudentFormValues) => {
@@ -88,7 +86,7 @@ const StudentsPage = () => {
       toast({ title: "Student Updated", description: `${data.name}'s record has been updated.` });
     } else {
       // Add new student
-      const newStudent = { ...data, id: Date.now(), attendance: 100 };
+      const newStudent: Student = { ...data, id: Date.now(), attendance: 100 };
       setStudents([...students, newStudent]);
       toast({ title: "Student Added", description: `${data.name} has been added to the system.` });
     }
@@ -194,7 +192,7 @@ const StudentsPage = () => {
                   <SelectValue placeholder="Filter by class" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Classes</SelectItem>
+                  <SelectItem value="all">All Classes</SelectItem>
                   <SelectItem value="Grade 9A">Grade 9A</SelectItem>
                   <SelectItem value="Grade 10A">Grade 10A</SelectItem>
                   <SelectItem value="Grade 10B">Grade 10B</SelectItem>

@@ -102,13 +102,14 @@ const mockTimetable = [
 
 const ClassesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGrade, setSelectedGrade] = useState('');
+  const [selectedGrade, setSelectedGrade] = useState('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const filteredClasses = mockClasses.filter(cls => 
-    cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     cls.teacher.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    cls.subject.toLowerCase().includes(searchTerm.toLowerCase())
+    cls.subject.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (selectedGrade === 'all' || cls.grade === selectedGrade)
   );
 
   const getStatusColor = (status: string) => {
@@ -293,7 +294,7 @@ const ClassesPage = () => {
                       <SelectValue placeholder="Filter by grade" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Grades</SelectItem>
+                      <SelectItem value="all">All Grades</SelectItem>
                       <SelectItem value="9">Grade 9</SelectItem>
                       <SelectItem value="10">Grade 10</SelectItem>
                       <SelectItem value="11">Grade 11</SelectItem>

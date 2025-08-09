@@ -103,14 +103,16 @@ const mockPayments = [
 
 const FeesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedClass, setSelectedClass] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedClass, setSelectedClass] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const filteredPayments = mockPayments.filter(payment => 
-    payment.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (payment.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     payment.rollNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    payment.class.toLowerCase().includes(searchTerm.toLowerCase())
+    payment.class.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (selectedClass === 'all' || payment.class.includes(selectedClass)) &&
+    (selectedStatus === 'all' || payment.status.toLowerCase() === selectedStatus)
   );
 
   const getStatusColor = (status: string) => {
@@ -298,11 +300,11 @@ const FeesPage = () => {
                       <SelectValue placeholder="Filter by class" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Classes</SelectItem>
-                      <SelectItem value="grade-9">Grade 9</SelectItem>
-                      <SelectItem value="grade-10">Grade 10</SelectItem>
-                      <SelectItem value="grade-11">Grade 11</SelectItem>
-                      <SelectItem value="grade-12">Grade 12</SelectItem>
+                      <SelectItem value="all">All Classes</SelectItem>
+                      <SelectItem value="9">Grade 9</SelectItem>
+                      <SelectItem value="10">Grade 10</SelectItem>
+                      <SelectItem value="11">Grade 11</SelectItem>
+                      <SelectItem value="12">Grade 12</SelectItem>
                     </SelectContent>
                   </Select>
                   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -311,7 +313,7 @@ const FeesPage = () => {
                       <SelectValue placeholder="Filter by status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Status</SelectItem>
+                      <SelectItem value="all">All Status</SelectItem>
                       <SelectItem value="paid">Paid</SelectItem>
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="overdue">Overdue</SelectItem>
