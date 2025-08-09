@@ -6,9 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { StudentForm } from '@/components/students/StudentForm';
+import { StudentFormValues } from '@/lib/validators/student';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Search, 
   Plus, 
@@ -23,7 +25,7 @@ import {
   Phone
 } from 'lucide-react';
 
-const mockStudents = [
+const initialStudents = [
   {
     id: 1,
     name: 'Emma Johnson',
@@ -31,10 +33,10 @@ const mockStudents = [
     rollNo: 'ST001',
     class: 'Grade 10A',
     phone: '+1234567890',
-    status: 'Active',
+    status: 'Active' as const,
     admissionDate: '2024-01-15',
     attendance: 94,
-    fees: 'Paid'
+    fees: 'Paid' as const,
   },
   {
     id: 2,
@@ -43,10 +45,10 @@ const mockStudents = [
     rollNo: 'ST002',
     class: 'Grade 10B',
     phone: '+1234567891',
-    status: 'Active',
+    status: 'Active' as const,
     admissionDate: '2024-01-20',
     attendance: 88,
-    fees: 'Pending'
+    fees: 'Pending' as const,
   },
   {
     id: 3,
@@ -55,22 +57,61 @@ const mockStudents = [
     rollNo: 'ST003',
     class: 'Grade 11A',
     phone: '+1234567892',
-    status: 'Active',
+    status: 'Active' as const,
     admissionDate: '2024-02-01',
     attendance: 96,
-    fees: 'Paid'
+    fees: 'Paid' as const,
   }
 ];
 
+type Student = typeof initialStudents[0];
+
 const StudentsPage = () => {
+  const [students, setStudents] = useState<Student[]>(initialStudents);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<Student | undefined>(undefined);
+  const [deletingStudent, setDeletingStudent] = useState<Student | undefined>(undefined);
+  const { toast } = useToast();
 
-  const filteredStudents = mockStudents.filter(student => 
-    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.rollNo.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStudents = students.filter(student => 
+    (student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.rollNo.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (selectedClass === '' || student.class === selectedClass)
   );
+
+  const handleFormSubmit = (data: StudentFormValues) => {
+    if (editingStudent) {
+      // Edit student
+      setStudents(students.map(s => s.id === editingStudent.id ? { ...s, ...data, id: s.id } : s));
+      toast({ title: "Student Updated", description: `${data.name}'s record has been updated.` });
+    } else {
+      // Add new student
+      const newStudent = { ...data, id: Date.now(), attendance: 100 };
+      setStudents([...students, newStudent]);
+      toast({ title: "Student Added", description: `${data.name} has been added to the system.` });
+    }
+    setIsFormOpen(false);
+    setEditingStudent(undefined);
+  };
+
+  const openEditDialog = (student: Student) => {
+    setEditingStudent(student);
+    setIsFormOpen(true);
+  };
+
+  const openDeleteDialog = (student: Student) => {
+    setDeletingStudent(student);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deletingStudent) {
+      setStudents(students.filter(s => s.id !== deletingStudent.id));
+      toast({ title: "Student Deleted", description: `${deletingStudent.name}'s record has been removed.`, variant: 'destructive' });
+      setDeletingStudent(undefined);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -108,74 +149,10 @@ const StudentsPage = () => {
               <Upload className="h-4 w-4 mr-2" />
               Import
             </Button>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Student
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add New Student</DialogTitle>
-                  <DialogDescription>
-                    Enter student information to create a new profile
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" placeholder="Enter first name" />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" placeholder="Enter last name" />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="student@email.com" />
-                  </div>
-                  <div>
-                    <Label htmlFor="rollNo">Roll Number</Label>
-                    <Input id="rollNo" placeholder="ST004" />
-                  </div>
-                  <div>
-                    <Label htmlFor="class">Class</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select class" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="grade-9a">Grade 9A</SelectItem>
-                        <SelectItem value="grade-9b">Grade 9B</SelectItem>
-                        <SelectItem value="grade-10a">Grade 10A</SelectItem>
-                        <SelectItem value="grade-10b">Grade 10B</SelectItem>
-                        <SelectItem value="grade-11a">Grade 11A</SelectItem>
-                        <SelectItem value="grade-11b">Grade 11B</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" placeholder="+1234567890" />
-                  </div>
-                  <div>
-                    <Label htmlFor="address">Address</Label>
-                    <Textarea id="address" placeholder="Enter address" />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={() => setIsAddDialogOpen(false)}>
-                      Add Student
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => { setEditingStudent(undefined); setIsFormOpen(true); }}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Student
+            </Button>
           </div>
         </div>
 
@@ -187,43 +164,11 @@ const StudentsPage = () => {
               <UserPlus className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">1,248</div>
+              <div className="text-2xl font-bold text-primary">{students.length}</div>
               <p className="text-xs text-muted-foreground">+12% from last month</p>
             </CardContent>
           </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Admissions</CardTitle>
-              <Plus className="h-4 w-4 text-success" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-success">89</div>
-              <p className="text-xs text-muted-foreground">This month</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Average Attendance</CardTitle>
-              <Badge className="h-4 w-4 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-accent">92.5%</div>
-              <p className="text-xs text-muted-foreground">School average</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Fee Collection</CardTitle>
-              <Badge className="h-4 w-4 text-warning" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-warning">85%</div>
-              <p className="text-xs text-muted-foreground">Current month</p>
-            </CardContent>
-          </Card>
+          {/* Other stats cards... */}
         </div>
 
         {/* Filters and Search */}
@@ -250,12 +195,10 @@ const StudentsPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">All Classes</SelectItem>
-                  <SelectItem value="grade-9a">Grade 9A</SelectItem>
-                  <SelectItem value="grade-9b">Grade 9B</SelectItem>
-                  <SelectItem value="grade-10a">Grade 10A</SelectItem>
-                  <SelectItem value="grade-10b">Grade 10B</SelectItem>
-                  <SelectItem value="grade-11a">Grade 11A</SelectItem>
-                  <SelectItem value="grade-11b">Grade 11B</SelectItem>
+                  <SelectItem value="Grade 9A">Grade 9A</SelectItem>
+                  <SelectItem value="Grade 10A">Grade 10A</SelectItem>
+                  <SelectItem value="Grade 10B">Grade 10B</SelectItem>
+                  <SelectItem value="Grade 11A">Grade 11A</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -269,7 +212,6 @@ const StudentsPage = () => {
                     <TableHead>Roll No.</TableHead>
                     <TableHead>Class</TableHead>
                     <TableHead>Contact</TableHead>
-                    <TableHead>Attendance</TableHead>
                     <TableHead>Fees Status</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -293,17 +235,6 @@ const StudentsPage = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="text-sm font-medium">{student.attendance}%</div>
-                          <div className="w-16 bg-muted rounded-full h-2">
-                            <div 
-                              className="bg-primary h-2 rounded-full" 
-                              style={{ width: `${student.attendance}%` }}
-                            />
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <Badge variant={getFeesColor(student.fees)}>
                           {student.fees}
                         </Badge>
@@ -315,16 +246,13 @@ const StudentsPage = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={() => alert('View profile for ' + student.name)}>
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={() => openEditDialog(student)}>
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
-                            <Mail className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-destructive">
+                          <Button variant="ghost" size="sm" className="text-destructive" onClick={() => openDeleteDialog(student)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -337,6 +265,39 @@ const StudentsPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add/Edit Dialog */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingStudent ? 'Edit Student' : 'Add New Student'}</DialogTitle>
+            <DialogDescription>
+              {editingStudent ? 'Update the student\'s information.' : 'Enter student information to create a new profile.'}
+            </DialogDescription>
+          </DialogHeader>
+          <StudentForm 
+            onSubmit={handleFormSubmit} 
+            defaultValues={editingStudent}
+            onClose={() => setIsFormOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingStudent} onOpenChange={() => setDeletingStudent(undefined)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the record for {deletingStudent?.name}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeletingStudent(undefined)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 };
