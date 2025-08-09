@@ -9,6 +9,7 @@ export const teacherFormSchema = z.object({
   qualification: z.string().min(2, { message: "Qualification is required." }),
   experience: z.string().min(1, { message: "Experience is required." }),
   joinDate: z.string().min(1, { message: "Joining date is required." }),
+  salary: z.string().min(1, { message: "Salary is required." }),
 });
 
 export type TeacherFormValues = z.infer<typeof teacherFormSchema>;
@@ -17,7 +18,6 @@ export const teacherSchema = teacherFormSchema.extend({
   id: z.number(),
   classes: z.array(z.string()),
   status: z.enum(['Active', 'On Leave', 'Inactive']),
-  salary: z.string(),
 });
 
 export type Teacher = z.infer<typeof teacherSchema>;

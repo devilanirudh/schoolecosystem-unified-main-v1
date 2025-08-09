@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +24,8 @@ import {
   Phone,
   Calendar,
   BookOpen,
-  UserCheck
+  UserCheck,
+  DollarSign
 } from 'lucide-react';
 
 const initialTeachers: Teacher[] = [
@@ -41,7 +41,7 @@ const initialTeachers: Teacher[] = [
     classes: ['Grade 10A', 'Grade 11B'],
     status: 'Active',
     joinDate: '2020-08-15',
-    salary: '$5,200'
+    salary: '5200'
   },
   {
     id: 2,
@@ -55,7 +55,7 @@ const initialTeachers: Teacher[] = [
     classes: ['Grade 9A', 'Grade 10B'],
     status: 'Active',
     joinDate: '2021-01-10',
-    salary: '$4,800'
+    salary: '4800'
   },
   {
     id: 3,
@@ -69,7 +69,7 @@ const initialTeachers: Teacher[] = [
     classes: ['Grade 11A', 'Grade 12A'],
     status: 'Active',
     joinDate: '2019-03-20',
-    salary: '$5,500'
+    salary: '5500'
   }
 ];
 
@@ -97,9 +97,8 @@ const TeachersPage = () => {
       const newTeacher: Teacher = {
         ...data,
         id: Date.now(),
-        classes: ['Grade 10A'], // Default value
-        status: 'Active', // Default value
-        salary: '$4,500' // Default value
+        classes: ['Grade 10A'],
+        status: 'Active',
       };
       setTeachers([...teachers, newTeacher]);
       toast({ title: "Teacher Added", description: `${data.name} has been added to the system.` });
@@ -135,177 +134,170 @@ const TeachersPage = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Teacher Management</h1>
-            <p className="text-muted-foreground">Manage faculty information, schedules, and performance</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-            <Button variant="outline" size="sm">
-              <Upload className="h-4 w-4 mr-2" />
-              Import
-            </Button>
-            <Button onClick={() => { setEditingTeacher(undefined); setIsFormOpen(true); }}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Teacher
-            </Button>
-          </div>
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Teacher Management</h1>
+          <p className="text-muted-foreground">Manage faculty information, schedules, and performance</p>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Teachers</CardTitle>
-              <GraduationCap className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{teachers.length}</div>
-              <p className="text-xs text-muted-foreground">+3 new this month</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Faculty</CardTitle>
-              <UserCheck className="h-4 w-4 text-success" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-success">{teachers.filter(t => t.status === 'Active').length}</div>
-              <p className="text-xs text-muted-foreground">{teachers.filter(t => t.status !== 'Active').length} on leave/inactive</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg Experience</CardTitle>
-              <Calendar className="h-4 w-4 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-accent">15</div>
-              <p className="text-xs text-muted-foreground">Years</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Classes Today</CardTitle>
-              <BookOpen className="h-4 w-4 text-warning" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-warning">45</div>
-              <p className="text-xs text-muted-foreground">Scheduled sessions</p>
-            </CardContent>
-          </Card>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Button variant="outline" size="sm">
+            <Upload className="h-4 w-4 mr-2" />
+            Import
+          </Button>
+          <Button onClick={() => { setEditingTeacher(undefined); setIsFormOpen(true); }}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Teacher
+          </Button>
         </div>
+      </div>
 
-        {/* Filters and Search */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Teacher List</CardTitle>
-            <CardDescription>View and manage all faculty members</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Teachers</CardTitle>
+            <GraduationCap className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Search teachers by name, ID, or subject..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Filter by subject" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Subjects</SelectItem>
-                  <SelectItem value="Mathematics">Mathematics</SelectItem>
-                  <SelectItem value="English Literature">English Literature</SelectItem>
-                  <SelectItem value="Physics">Physics</SelectItem>
-                  <SelectItem value="Chemistry">Chemistry</SelectItem>
-                  <SelectItem value="Biology">Biology</SelectItem>
-                  <SelectItem value="History">History</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Teachers Table */}
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Teacher</TableHead>
-                    <TableHead>Employee ID</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Experience</TableHead>
-                    <TableHead>Classes</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredTeachers.map((teacher) => (
-                    <TableRow key={teacher.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{teacher.name}</div>
-                          <div className="text-sm text-muted-foreground flex items-center gap-1">
-                            <Mail className="h-3 w-3" />
-                            {teacher.email}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-medium">{teacher.empId}</TableCell>
-                      <TableCell>{teacher.subject}</TableCell>
-                      <TableCell>{teacher.experience}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {teacher.classes.map((cls, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {cls}
-                            </Badge>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={getStatusColor(teacher.status)}>
-                          {teacher.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => alert('View profile for ' + teacher.name)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => openEditDialog(teacher)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-destructive" onClick={() => openDeleteDialog(teacher)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <div className="text-2xl font-bold text-primary">{teachers.length}</div>
+            <p className="text-xs text-muted-foreground">+3 new this month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Faculty</CardTitle>
+            <UserCheck className="h-4 w-4 text-success" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-success">{teachers.filter(t => t.status === 'Active').length}</div>
+            <p className="text-xs text-muted-foreground">{teachers.filter(t => t.status !== 'Active').length} on leave/inactive</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Experience</CardTitle>
+            <Calendar className="h-4 w-4 text-accent" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-accent">15</div>
+            <p className="text-xs text-muted-foreground">Years</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Classes Today</CardTitle>
+            <BookOpen className="h-4 w-4 text-warning" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-warning">45</div>
+            <p className="text-xs text-muted-foreground">Scheduled sessions</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Add/Edit Dialog */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Teacher List</CardTitle>
+          <CardDescription>View and manage all faculty members</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search teachers by name, ID, or subject..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+              <SelectTrigger className="w-full sm:w-48">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Filter by subject" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Subjects</SelectItem>
+                <SelectItem value="Mathematics">Mathematics</SelectItem>
+                <SelectItem value="English Literature">English Literature</SelectItem>
+                <SelectItem value="Physics">Physics</SelectItem>
+                <SelectItem value="Chemistry">Chemistry</SelectItem>
+                <SelectItem value="Biology">Biology</SelectItem>
+                <SelectItem value="History">History</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Teacher</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Salary</TableHead>
+                  <TableHead>Classes</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredTeachers.map((teacher) => (
+                  <TableRow key={teacher.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{teacher.name}</div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          {teacher.email}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{teacher.subject}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{teacher.salary}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {teacher.classes.map((cls, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {cls}
+                          </Badge>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusColor(teacher.status)}>
+                        {teacher.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => alert('View profile for ' + teacher.name)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => openEditDialog(teacher)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-destructive" onClick={() => openDeleteDialog(teacher)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -322,7 +314,6 @@ const TeachersPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deletingTeacher} onOpenChange={() => setDeletingTeacher(undefined)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -337,7 +328,7 @@ const TeachersPage = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </DashboardLayout>
+    </div>
   );
 };
 

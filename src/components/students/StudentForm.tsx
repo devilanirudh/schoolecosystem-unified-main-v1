@@ -3,9 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Student, StudentFormValues, studentFormSchema } from '@/lib/validators/student';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
 
 interface StudentFormProps {
   onSubmit: (data: StudentFormValues) => void;
@@ -109,17 +109,80 @@ export function StudentForm({ onSubmit, defaultValues, onClose }: StudentFormPro
         />
         <FormField
           control={form.control}
-          name="admissionDate"
+          name="parentName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Admission Date</FormLabel>
+              <FormLabel>Parent/Guardian Name</FormLabel>
               <FormControl>
-                <Input type="date" {...field} />
+                <Input placeholder="Enter parent's name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="parentPhone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Parent/Guardian Phone</FormLabel>
+              <FormControl>
+                <Input placeholder="+1987654321" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Enter student's address" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="admissionDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Admission Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="fees"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Fee Status</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select fee status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Paid">Paid</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Overdue">Overdue</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel

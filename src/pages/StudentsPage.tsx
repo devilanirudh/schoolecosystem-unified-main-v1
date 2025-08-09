@@ -20,7 +20,6 @@ import {
   Download,
   Upload,
   UserPlus,
-  Mail,
   Phone
 } from 'lucide-react';
 
@@ -36,6 +35,9 @@ const initialStudents: Student[] = [
     admissionDate: '2024-01-15',
     attendance: 94,
     fees: 'Paid',
+    parentName: 'John Johnson',
+    parentPhone: '+1112223333',
+    address: '123 Maple Street, Springfield'
   },
   {
     id: 2,
@@ -48,6 +50,9 @@ const initialStudents: Student[] = [
     admissionDate: '2024-01-20',
     attendance: 88,
     fees: 'Pending',
+    parentName: 'Wei Chen',
+    parentPhone: '+14445556666',
+    address: '456 Oak Avenue, Springfield'
   },
   {
     id: 3,
@@ -60,6 +65,9 @@ const initialStudents: Student[] = [
     admissionDate: '2024-02-01',
     attendance: 96,
     fees: 'Paid',
+    parentName: 'David Williams',
+    parentPhone: '+17778889999',
+    address: '789 Pine Lane, Springfield'
   }
 ];
 
@@ -80,11 +88,9 @@ const StudentsPage = () => {
 
   const handleFormSubmit = (data: StudentFormValues) => {
     if (editingStudent) {
-      // Edit student
-      setStudents(students.map(s => s.id === editingStudent.id ? { ...s, ...data, id: s.id } : s));
+      setStudents(students.map(s => s.id === editingStudent.id ? { ...editingStudent, ...data } : s));
       toast({ title: "Student Updated", description: `${data.name}'s record has been updated.` });
     } else {
-      // Add new student
       const newStudent: Student = { ...data, id: Date.now(), attendance: 100 };
       setStudents([...students, newStudent]);
       toast({ title: "Student Added", description: `${data.name} has been added to the system.` });
@@ -130,7 +136,6 @@ const StudentsPage = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Student Management</h1>
@@ -152,7 +157,6 @@ const StudentsPage = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -164,10 +168,8 @@ const StudentsPage = () => {
             <p className="text-xs text-muted-foreground">+12% from last month</p>
           </CardContent>
         </Card>
-        {/* Other stats cards... */}
       </div>
 
-      {/* Filters and Search */}
       <Card>
         <CardHeader>
           <CardTitle>Student List</CardTitle>
@@ -199,15 +201,13 @@ const StudentsPage = () => {
             </Select>
           </div>
 
-          {/* Students Table */}
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Student</TableHead>
-                  <TableHead>Roll No.</TableHead>
                   <TableHead>Class</TableHead>
-                  <TableHead>Contact</TableHead>
+                  <TableHead>Parent Contact</TableHead>
                   <TableHead>Fees Status</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -219,15 +219,17 @@ const StudentsPage = () => {
                     <TableCell>
                       <div>
                         <div className="font-medium">{student.name}</div>
-                        <div className="text-sm text-muted-foreground">{student.email}</div>
+                        <div className="text-sm text-muted-foreground">{student.rollNo}</div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{student.rollNo}</TableCell>
                     <TableCell>{student.class}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-3 w-3" />
-                        <span className="text-sm">{student.phone}</span>
+                      <div>
+                        <div className="font-medium">{student.parentName}</div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-1">
+                          <Phone className="h-3 w-3" />
+                          {student.parentPhone}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -261,7 +263,6 @@ const StudentsPage = () => {
         </CardContent>
       </Card>
 
-      {/* Add/Edit Dialog */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -278,7 +279,6 @@ const StudentsPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deletingStudent} onOpenChange={() => setDeletingStudent(undefined)}>
         <AlertDialogContent>
           <AlertDialogHeader>

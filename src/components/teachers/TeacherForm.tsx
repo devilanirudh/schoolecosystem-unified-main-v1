@@ -144,6 +144,19 @@ export function TeacherForm({ onSubmit, defaultValues, onClose }: TeacherFormPro
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="salary"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Salary ($)</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="e.g., 5500" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
