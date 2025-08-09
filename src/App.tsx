@@ -22,6 +22,7 @@ import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
 import HostelPage from "./pages/HostelPage";
 import CommunicationPage from "./pages/CommunicationPage";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -34,22 +35,24 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/students" element={<StudentsPage />} />
-            <Route path="/teachers" element={<TeachersPage />} />
-            <Route path="/classes" element={<ClassesPage />} />
-            <Route path="/assignments" element={<AssignmentsPage />} />
-            <Route path="/exams" element={<ExamsPage />} />
-            <Route path="/fees" element={<FeesPage />} />
-            <Route path="/live-classes" element={<LiveClassesPage />} />
-            <Route path="/library" element={<LibraryPage />} />
-            <Route path="/transport" element={<TransportPage />} />
-            <Route path="/events" element={<EventsPage />} />
-            <Route path="/cms" element={<CMSPage />} />
-            <Route path="/crm" element={<CRMPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/hostel" element={<HostelPage />} />
-            <Route path="/communication" element={<CommunicationPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/students" element={<StudentsPage />} />
+              <Route path="/teachers" element={<TeachersPage />} />
+              <Route path="/classes" element={<ClassesPage />} />
+              <Route path="/assignments" element={<AssignmentsPage />} />
+              <Route path="/exams" element={<ExamsPage />} />
+              <Route path="/fees" element={<FeesPage />} />
+              <Route path="/live-classes" element={<LiveClassesPage />} />
+              <Route path="/library" element={<LibraryPage />} />
+              <Route path="/transport" element={<TransportPage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/cms" element={<CMSPage />} />
+              <Route path="/crm" element={<CRMPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/hostel" element={<HostelPage />} />
+              <Route path="/communication" element={<CommunicationPage />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
