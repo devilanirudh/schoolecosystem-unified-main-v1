@@ -84,6 +84,20 @@ const FeesPage = () => {
   );
 
   const handlePaymentSubmit = (data: RecordPaymentFormValues) => {
+    setPayments(prevPayments => 
+      prevPayments.map(p => 
+        p.id === parseInt(data.studentId) 
+        ? { 
+            ...p, 
+            status: 'Paid', 
+            amount: data.amount,
+            paidDate: data.paidDate, 
+            paymentMethod: data.paymentMethod,
+            transactionId: data.transactionId || null
+          } 
+        : p
+      )
+    );
     toast({ title: "Payment Recorded", description: `Payment of $${data.amount} has been recorded.` });
     setIsFormOpen(false);
   };
